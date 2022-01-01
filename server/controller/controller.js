@@ -1,10 +1,105 @@
-const UploadModel = require('../model/schema');
 const fs = require('fs');
+const path = require('path');
+const ApartmentModel = require('../model/schema');
+const markerImage = '/blueCircle.png';
 
-exports.home = async (req, res) => {
-   const allImages = await UploadModel.find({});
+exports.getApartments = async (req, res) => {
+   const apartments = [
+      {
+         lat: 50.42711686105861,
+         lng: 30.453401587110793,
+         icon: markerImage,
+         apartmentInfo: {
+            image: 'flat1.jpg',
+            description: 'Квартира подобово в Києві, центр vip',
+            cost: '1500 грн / доба',
+            areaOfCity: 'Киев, Печерский район, Украина',
+         },
+      },
+      {
+         lat: 50.42677371631405,
+         lng: 30.454774731468667,
+         icon: markerImage,
+         apartmentInfo: {
+            image: 'flat2.jpg',
+            description: '1-комнатная ул.Мельникова',
+            cost: 'від 550 грн/доба',
+            areaOfCity: 'Киев, Шевченковский район, Украина',
+         },
+      },
+      {
+         lat: 50.42852807809127,
+         lng: 30.451891886960425,
+         icon: markerImage,
+         apartmentInfo: {
+            image: 'flat3.jpg',
+            description: 'Двухместный номер с двуспальной кроватью и кондиционером Саксаганского',
+            cost: '650 грн/доба',
+            areaOfCity: 'Саксаганского улица, Киев, Печерский район, Украина',
+         },
+      },
+      {
+         lat: 50.42852807809127,
+         lng: 30.451891886960425,
+         icon: markerImage,
+         apartmentInfo: {
+            image: 'flat3.jpg',
+            description: 'Двухместный номер с двуспальной кроватью и кондиционером Саксаганского',
+            cost: '650 грн/доба',
+            areaOfCity: 'Саксаганского улица, Киев, Печерский район, Украина',
+         },
+      },
+   ];
+
+   // const allImages = await UploadModel.find({});
    // console.log(allImages);
-   res.render('main', { images: allImages });
+   // console.log(apartments);
+   for (let apartment of apartments) {
+   // const apartment = apartments[1];
+      console.log(apartment);
+      const { lat, lng, icon } = apartment;
+      const { image, description, cost, areaOfCity } = apartment.apartmentInfo;
+      let imageFile = null;
+      let encodeImage = null;
+      let imagePath = null;
+      try {
+         imagePath = path.resolve(__dirname, '..', '..', 'public', image);
+         console.log(__dirname);
+         console.log(imagePath);
+         imageFile = fs.readFileSync(imagePath);
+         encodeImage = imageFile.toString('base64');
+      } catch (error) {
+         console.log(error);
+         return;
+      }
+
+      const apartmentModel = new ApartmentModel({
+         lat,
+         lng,
+         icon,
+         image: encodeImage,
+         description,
+         cost,
+         areaOfCity,
+      });
+      console.log('Apartment model', apartmentModel);
+      apartmentModel
+         .save()
+         .then(() => {
+            return { message: `Apartment successfully loaded to a database` };
+         })
+         .catch(error => {
+            console.log('ERROR');
+            if (error) {
+               console.log('Error name:', error.name);
+               console.log('Error name:', error);
+
+               return Promise.reject({ error: error.message || 'Cannot load apartment info to the database' });
+            }
+         });
+   }
+
+   res.render('main', { apartments });
 };
 exports.uploads = (req, res, next) => {
    const files = req.files;
@@ -29,7 +124,7 @@ exports.uploads = (req, res, next) => {
          imageBase64: encodeImage,
       };
 
-      const uploadModel = new UploadModel(modelObject);
+      const uploadModel = new ApartmentModel(modelObject);
 
       return uploadModel
          .save()

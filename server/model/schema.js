@@ -1,21 +1,40 @@
 const mongoose = require('mongoose');
 
-const UpdateSchema = new mongoose.Schema({
-   filename: {
-      type: String,
-      unique: true,
+const ApartmentSchema = new mongoose.Schema({
+   lat: {
+      type: Number,
+      unique: false,
       required: true,
    },
-   contentType: {
+   lng: {
+      type: Number,
+      unique: false,
+      required: true,
+   },
+   icon: {
+      type: String,
+      unique: false,
+      required: true,
+   },
+   image: {
+      type: String,
+      unique: false,
+      required: true,
+   },
+   description: {
       type: String,
       required: true,
    },
-   imageBase64: {
+   cost: {
+      type: String,
+      required: true,
+   },
+   areaOfCity: {
       type: String,
       required: true,
    },
 });
 
-const UploadModel = mongoose.model('uploads', UpdateSchema);
+const ApartmentModel = mongoose.model('apartments', ApartmentSchema);
 
-module.exports = UploadModel;
+module.exports = ApartmentModel;

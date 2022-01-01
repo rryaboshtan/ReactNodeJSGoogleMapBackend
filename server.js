@@ -15,7 +15,6 @@ app.engine(
    'hbs',
    hbs({
       extname: 'hbs',
-      // defaultLayout: 'layout',
       defaultView: 'default',
       layoutsDir: path.join(__dirname, 'views'),
       partialsDir: path.join(__dirname, 'views/partials'),
@@ -25,4 +24,4 @@ app.set('view engine', 'hbs');
 
 app.use('/', require('./server/router/router'));
 
-app.listen(3000, () => console.log('Server is started on http://localhost:3000'));
+app.listen(5000, () => console.log('Server is started on http://localhost:5000'));
