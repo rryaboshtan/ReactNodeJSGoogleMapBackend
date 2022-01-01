@@ -4,6 +4,7 @@ const ApartmentModel = require('../model/schema');
 const markerImage = '/blueCircle.png';
 
 exports.getApartments = async (req, res) => {
+   
    const apartments = [
       {
          lat: 50.42711686105861,
@@ -51,55 +52,60 @@ exports.getApartments = async (req, res) => {
       },
    ];
 
-   // const allImages = await UploadModel.find({});
+   const allApartments = await ApartmentModel.find({});
    // console.log(allImages);
    // console.log(apartments);
-   for (let apartment of apartments) {
-   // const apartment = apartments[1];
-      console.log(apartment);
-      const { lat, lng, icon } = apartment;
-      const { image, description, cost, areaOfCity } = apartment.apartmentInfo;
-      let imageFile = null;
-      let encodeImage = null;
-      let imagePath = null;
-      try {
-         imagePath = path.resolve(__dirname, '..', '..', 'public', image);
-         console.log(__dirname);
-         console.log(imagePath);
-         imageFile = fs.readFileSync(imagePath);
-         encodeImage = imageFile.toString('base64');
-      } catch (error) {
-         console.log(error);
-         return;
-      }
+   // for (let apartment of apartments) {
+   //    console.log(apartment);
+   //    const { lat, lng, icon } = apartment;
+   //    const { image, description, cost, areaOfCity } = apartment.apartmentInfo;
+   //    let imageFile = null;
+   //    let encodeImage = null;
+   //    let imagePath = null;
+   //    try {
+   //       imagePath = path.resolve(__dirname, '..', '..', 'public', image);
+   //       console.log(__dirname);
+      //    console.log(imagePath);
+      //    imageFile = fs.readFileSync(imagePath);
+      //    encodeImage = imageFile.toString('base64');
+      // } catch (error) {
+      //    console.log(error);
+      //    return;
+      // }
 
-      const apartmentModel = new ApartmentModel({
-         lat,
-         lng,
-         icon,
-         image: encodeImage,
-         description,
-         cost,
-         areaOfCity,
-      });
-      console.log('Apartment model', apartmentModel);
-      apartmentModel
-         .save()
-         .then(() => {
-            return { message: `Apartment successfully loaded to a database` };
-         })
-         .catch(error => {
-            console.log('ERROR');
-            if (error) {
-               console.log('Error name:', error.name);
-               console.log('Error name:', error);
+      // const apartmentModel = new ApartmentModel({
+      //    lat,
+      //    lng,
+      //    icon,
+      //    image: encodeImage,
+      //    description,
+      //    cost,
+      //    areaOfCity,
+      // });
+      // console.log('Apartment model', apartmentModel);
+      // apartmentModel
+      //    .save()
+      //    .then(() => {
+      //       return { message: `Apartment successfully loaded to a database` };
+      //    })
+      //    .catch(error => {
+      //       console.log('ERROR');
+   //          if (error) {
+   //             console.log('Error name:', error.name);
+   //             console.log('Error name:', error);
 
-               return Promise.reject({ error: error.message || 'Cannot load apartment info to the database' });
-            }
-         });
+   //             return Promise.reject({ error: error.message || 'Cannot load apartment info to the database' });
+   //          }
+   //       });
+   // }
+   
+   try {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.send(allApartments)
+   } catch (error) {
+      console.log(error);
    }
-
-   res.render('main', { apartments });
+   // res.render('main', { apartments });
 };
 exports.uploads = (req, res, next) => {
    const files = req.files;
