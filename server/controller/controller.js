@@ -121,8 +121,8 @@ exports.uploads = (req, res, next) => {
    const encodeImage = image.toString('base64');
 
    const apartment = {
-      lat: 50,
-      lng: 30,
+      lat: req.body.lat,
+      lng: req.body.lng,
       icon: markerImage,
       image: encodeImage,
       description: req.body.description,
