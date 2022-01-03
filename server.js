@@ -8,8 +8,8 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-require('./server/database/database')();
+require('./src/database/database')();
 
-app.use('/', require('./server/router/router'));
+app.use('/', require('./src/router/router'));
 
 app.listen(5000, () => console.log('Server is started on http://localhost:5000'));
