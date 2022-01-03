@@ -6,7 +6,6 @@
     - Express
     - Multer
     - MongoDB
-    - Express Handlebars
     - MVC
 
 ### Screenshots
