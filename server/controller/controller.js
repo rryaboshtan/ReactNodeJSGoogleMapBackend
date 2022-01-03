@@ -4,7 +4,6 @@ const ApartmentModel = require('../model/schema');
 const markerImage = '/blueCircle.png';
 
 exports.getApartments = async (req, res) => {
-   
    const apartments = [
       {
          lat: 50.42711686105861,
@@ -65,31 +64,32 @@ exports.getApartments = async (req, res) => {
    //    try {
    //       imagePath = path.resolve(__dirname, '..', '..', 'public', image);
    //       console.log(__dirname);
-      //    console.log(imagePath);
-      //    imageFile = fs.readFileSync(imagePath);
-      //    encodeImage = imageFile.toString('base64');
-      // } catch (error) {
-      //    console.log(error);
-      //    return;
-      // }
+   //    console.log(imagePath);
+   //    imageFile = fs.readFileSync(imagePath);
+   //    encodeImage = imageFile.toString('base64');
+   // } catch (error) {
+   //    console.log(error);
+   //    return;
+   // }
 
-      // const apartmentModel = new ApartmentModel({
-      //    lat,
-      //    lng,
-      //    icon,
-      //    image: encodeImage,
-      //    description,
-      //    cost,
-      //    areaOfCity,
-      // });
-      // console.log('Apartment model', apartmentModel);
-      // apartmentModel
-      //    .save()
-      //    .then(() => {
-      //       return { message: `Apartment successfully loaded to a database` };
-      //    })
-      //    .catch(error => {
-      //       console.log('ERROR');
+   // const apartmentModel = new ApartmentModel({
+   //    lat,
+   //    lng,
+   //    icon,
+   //    image: encodeImage,
+   //    description,
+   //    cost,
+   //    areaOfCity,
+   // });
+   // console.log('Apartment model', apartmentModel);
+   // apartmentModel
+   //    .save()
+   //    .then(() => {
+   //       console.log('Apartment successfully loaded to a database');
+   //       return { message: `Apartment successfully loaded to a database` };
+   //    })
+   //    .catch(error => {
+   //       console.log('ERROR');
    //          if (error) {
    //             console.log('Error name:', error.name);
    //             console.log('Error name:', error);
@@ -98,17 +98,17 @@ exports.getApartments = async (req, res) => {
    //          }
    //       });
    // }
-   
+
    try {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.send(allApartments)
+      res.send(allApartments);
    } catch (error) {
       console.log(error);
    }
-   // res.render('main', { apartments });
 };
+
 exports.uploads = (req, res, next) => {
    const files = req.files;
+   console.log(req.body);
 
    if (!files) {
       const error = new Error('Please choose files');
@@ -116,43 +116,38 @@ exports.uploads = (req, res, next) => {
       return next(error);
    }
 
-   const imageArray = files.map(file => {
-      const image = fs.readFileSync(file.path);
+   const image = fs.readFileSync(files[0].path);
 
-      const encodeImage = image.toString('base64');
-      return encodeImage;
-   });
+   const encodeImage = image.toString('base64');
 
-   const result = imageArray.map((encodeImage, index) => {
-      const modelObject = {
-         filename: files[index].originalname,
-         contentType: files[index].mimetype,
-         imageBase64: encodeImage,
-      };
+   const apartment = {
+      lat: 50,
+      lng: 30,
+      icon: markerImage,
+      image: encodeImage,
+      description: req.body.description,
+      cost: req.body.cost,
+      areaOfCity: req.body.areaOfCity,
+   };
 
-      const uploadModel = new ApartmentModel(modelObject);
+   console.log(apartment);
 
-      return uploadModel
-         .save()
-         .then(() => {
-            return { message: `${files[index].originalname} uploaded successfully...!` };
-         })
-         .catch(error => {
-            if (error) {
-               if (error.name === 'MongoError' && error.code === 11000) {
-                  return Promise.reject({ error: `Duplicate ${files[index].originalname}. File already exists!` });
-               }
+   const apartmentModel = new ApartmentModel(apartment);
 
-               return Promise.reject({ error: error.message || `Cannot upload ${files[index].originalname} something missing` });
-            }
-         });
-   });
-
-   Promise.all(result)
-      .then(message => {
-         res.json(message);
+   apartmentModel
+      .save()
+      .then(() => {
+          console.log('Apartment successfully loaded to a database');
+         return { message: `Apartment successfully loaded to a database` };
+        
       })
       .catch(error => {
-         res.json(error);
+         console.log('ERROR');
+         if (error) {
+            console.log('Error name:', error.name);
+            console.log('Error name:', error);
+
+            return Promise.reject({ error: error.message || 'Cannot load apartment info to the database' });
+         }
       });
 };
