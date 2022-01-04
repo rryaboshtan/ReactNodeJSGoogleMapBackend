@@ -29,13 +29,13 @@ require('./src/database/database')();
 app.use('/', require('./src/router/router'));
 
 // For deploy only
-if (process.env.NODE_ENV === 'production') {
+// if (process.env.NODE_ENV === 'production') {
    // Serve any static files
    app.use(express.static(path.join(__dirname, 'frontend/build')));
    // Handle React routing, return all requests to React app
    app.get('*', function (req, res) {
       res.sendFile(path.join(__dirname, 'frontend/build', 'index.html'));
    });
-}
+// }
 
 app.listen(process.env.PORT || 5000, () => console.log('Server is started on http://localhost:5000'));
